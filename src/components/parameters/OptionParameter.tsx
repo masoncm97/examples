@@ -12,7 +12,14 @@ const OptionParameter = (props: {form: any, parameter: any}) => {
     }
   });  
 
-  const onChange = (newValue: string) => {
+  const onChange = (newValue: number | null) => {
+    if (newValue !== null) {
+      setValue(newValue);
+      props.form.setFieldsValue({[props.parameter.name]: newValue});
+    }
+  };
+
+  const onSwitchChange = (newValue: boolean) => {
     setValue(newValue);
     props.form.setFieldsValue({[props.parameter.name]: newValue});
   };
@@ -26,11 +33,15 @@ const OptionParameter = (props: {form: any, parameter: any}) => {
             label={props.parameter.label} 
             name={props.parameter.name}
             initialValue={props.parameter.defaultValue}
+            rules={[{ 
+              required: props.parameter.isRequired, 
+              message: `${props.parameter.label} required`
+            }]}
           >      
             {typeof props.parameter.defaultValue === "boolean" ? (
               <Switch
                 checked={value}
-                onChange={onChange}
+                onChange={onSwitchChange}
               />              
             ) : (
               <Select
@@ -44,11 +55,9 @@ const OptionParameter = (props: {form: any, parameter: any}) => {
         </Col>
       </Row>
       <Row>
-        <Col>
-          <span style={{color: "gray"}}>
-            {props.parameter.description}
-          </span>
-        </Col>
+        <span style={{color: "gray"}}>
+          {props.parameter.description}
+        </span>
       </Row>
     </>
   );

@@ -5,11 +5,13 @@ import { useState } from "react";
 const SliderParameter = (props: {form: any, parameter: any}) => {
   const [value, setValue] = useState(props.parameter.defaultValue);
 
-  const onChange = (newValue: number) => {
-    setValue(newValue);
-    props.form.setFieldsValue({[props.parameter.name]: newValue});
+  const onChange = (newValue: number | null) => {
+    if (newValue !== null) {
+      setValue(newValue);
+      props.form.setFieldsValue({[props.parameter.name]: newValue});
+    }
   };
-
+  
   return (
     <>
       <Row>
@@ -19,11 +21,16 @@ const SliderParameter = (props: {form: any, parameter: any}) => {
             label={props.parameter.label} 
             name={props.parameter.name}
             initialValue={props.parameter.defaultValue} 
+            rules={[{ 
+              required: props.parameter.isRequired, 
+              message: `${props.parameter.label} required`
+            }]}
           >
             <Slider 
               value={value}
               min={props.parameter.minimum} 
               max={props.parameter.maximum} 
+              step={props.parameter.step ? props.parameter.step : 1} 
               onChange={(newValue: number) => setValue(newValue)}
             />
           </Form.Item>
@@ -38,9 +45,7 @@ const SliderParameter = (props: {form: any, parameter: any}) => {
         </Col>
       </Row>
       <Row>
-        <Col>
-          <span style={{color: "gray" }}>{props.parameter.description}</span>
-        </Col>
+        <span style={{color: "gray" }}>{props.parameter.description}</span>
       </Row>
     </>
   );
